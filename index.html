@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DitherJS Demo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #1a1a2e;
+            color: #eee;
+            min-height: 100vh;
+            padding: 40px;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-weight: 300;
+            letter-spacing: 2px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .controls {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 30px;
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        label {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #888;
+        }
+
+        input[type="range"] {
+            width: 100px;
+            cursor: pointer;
+        }
+
+        select, input[type="file"], button {
+            padding: 10px 15px;
+            border: 1px solid #333;
+            background: #16213e;
+            color: #eee;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        select:hover, button:hover {
+            border-color: #0f3460;
+            background: #1a1a40;
+        }
+
+        button {
+            background: #e94560;
+            border-color: #e94560;
+            font-weight: bold;
+        }
+
+        button:hover {
+            background: #ff6b6b;
+        }
+
+        .images {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 30px;
+            justify-items: center;
+        }
+
+        .image-box {
+            background: #16213e;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .image-box h3 {
+            margin-bottom: 15px;
+            font-weight: 400;
+            color: #888;
+        }
+
+        .image-box img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        #originalImage, #ditheredImage {
+            max-width: 500px;
+            background: #222;
+        }
+
+        .drop-zone {
+            border: 2px dashed #333;
+            padding: 60px;
+            text-align: center;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            transition: all 0.3s;
+        }
+
+        .drop-zone.dragover {
+            border-color: #e94560;
+            background: rgba(233, 69, 96, 0.1);
+        }
+
+        .drop-zone p {
+            color: #666;
+        }
+
+        .color-picker {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 8px;
+            justify-items: center;
+            max-width: 350px;
+            margin: 0 auto 30px;
+        }
+
+        .color-option {
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+        }
+
+        .color-option input {
+            display: none;
+        }
+
+        .color-option .swatch {
+            width: 36px;
+            height: 36px;
+            border-radius: 6px;
+            border: 3px solid #333;
+            transition: all 0.15s;
+        }
+
+        .color-option input:checked + .swatch {
+            border-color: #e94560;
+            box-shadow: 0 0 10px rgba(233, 69, 96, 0.5);
+        }
+
+        .color-option:hover .swatch {
+            transform: scale(1.1);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>DITHER.JS DEMO</h1>
+
+        <div class="drop-zone" id="dropZone">
+            <p>Drag & drop an image or video here, or use the file picker below</p>
+        </div>
+
+        <div class="controls">
+            <div class="control-group">
+                <label>&nbsp;</label>
+                <button id="webcamBtn">Use Webcam</button>
+            </div>
+
+            <div class="control-group">
+                <label>Choose Image</label>
+                <input type="file" id="fileInput" accept="image/*,video/*">
+            </div>
+
+            <div class="control-group">
+                <label>Step</label>
+                <input type="range" id="step" min="1" max="10" value="1">
+            </div>
+
+            <div class="control-group">
+                <label>Brightness</label>
+                <input type="range" id="brightness" min="-10" max="10" value="0">
+            </div>
+
+            <div class="control-group">
+                <label>&nbsp;</label>
+                <button id="ditherBtn">Apply Dither</button>
+            </div>
+        </div>
+
+        <div class="color-picker" id="colorPicker">
+            <!-- Row 1: Primary colors -->
+            <label class="color-option">
+                <input type="checkbox" data-color="0,0,0" checked>
+                <span class="swatch" style="background: rgb(0,0,0)"></span>
+            </label>
+            <label class="color-option">
+                <input type="checkbox" data-color="255,0,0">
+                <span class="swatch" style="background: rgb(255,0,0)"></span>
+            </label>
+            <label class="color-option">
+                <input type="checkbox" data-color="255,127,0">
+                <span class="swatch" style="background: rgb(255,127,0)"></span>
+            </label>
+            <label class="color-option">
+                <input type="checkbox" data-color="255,255,0">
+                <span class="swatch" style="background: rgb(228,203,67)"></span>
+            </label>
+            <label class="color-option">
+                <input type="checkbox" data-color="127,255,0">
+                <span class="swatch" style="background: rgb(127,255,0)"></span>
+            </label>
+            <label class="color-option">
+                <input type="checkbox" data-color="0,255,0">
+                <span class="swatch" style="background: rgb(0,255,0)"></span>
+            </label>
+            <label class="color-option">
+                <input type="checkbox" data-color="0,255,127">
+                <span class="swatch" style="background: rgb(0,255,127)"></span>
+            </label>
+            <!-- Row 2: Complementary colors -->
+            <label class="color-option">
+                <input type="checkbox" data-color="255,255,255" checked>
+                <span class="swatch" style="background: rgb(255,255,255)"></span>
+            </label>
+            <label class="color-option">
+                <input type="checkbox" data-color="0,255,255">
+                <span class="swatch" style="background: rgb(0,255,255)"></span>
+            </label>
+            <label class="color-option">
+                <input type="checkbox" data-color="0,127,255">
+                <span class="swatch" style="background: rgb(0,127,255)"></span>
+            </label>
+            <label class="color-option">
+                <input type="checkbox" data-color="0,0,255">
+                <span class="swatch" style="background: rgb(0,0,255)"></span>
+            </label>
+            <label class="color-option">
+                <input type="checkbox" data-color="127,0,255">
+                <span class="swatch" style="background: rgb(127,0,255)"></span>
+            </label>
+            <label class="color-option">
+                <input type="checkbox" data-color="255,0,255">
+                <span class="swatch" style="background: rgb(255,0,255)"></span>
+            </label>
+            <label class="color-option">
+                <input type="checkbox" data-color="255,0,127">
+                <span class="swatch" style="background: rgb(255,0,127)"></span>
+            </label>
+        </div>
+
+        <div class="images">
+            <div class="image-box">
+                <h3>Original</h3>
+                <img id="originalImage" src="" alt="Original image">
+            </div>
+            <div class="image-box">
+                <h3>Dithered</h3>
+                <img id="ditheredImage" src="" alt="Dithered image">
+            </div>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/ditherjs@1.4.2/dist/ditherjs.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
