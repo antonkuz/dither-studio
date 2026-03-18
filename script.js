@@ -8,6 +8,15 @@ const stepSelect = document.getElementById('step');
 const brightnessSlider = document.getElementById('brightness');
 const dropZone = document.getElementById('dropZone');
 const colorPicker = document.getElementById('colorPicker');
+const copyBtn = document.getElementById('copyBtn');
+
+copyBtn.addEventListener('click', () => {
+    const json = JSON.stringify({ step: +stepSelect.value, brightness: +brightnessSlider.value });
+    navigator.clipboard.writeText(json);
+    const orig = copyBtn.textContent;
+    copyBtn.textContent = 'Copied!';
+    setTimeout(() => copyBtn.textContent = orig, 1000);
+});
 
 // Current loaded image data URL
 let currentImageSrc = null;
