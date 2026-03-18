@@ -91,10 +91,11 @@ function processVideoFrame(timestamp = 0) {
         lastFrameTime = timestamp;
         
         const canvas = document.createElement('canvas');
-        canvas.width = activeVideo.videoWidth;
-        canvas.height = activeVideo.videoHeight;
+        const { width: vw, height: vh } = constrainToViewport(activeVideo.videoWidth, activeVideo.videoHeight);
+        canvas.width = vw;
+        canvas.height = vh;
         const ctx = canvas.getContext('2d');
-        ctx.drawImage(activeVideo, 0, 0);
+        ctx.drawImage(activeVideo, 0, 0, vw, vh);
         
         // Apply dithering
         const options = {
@@ -186,13 +187,14 @@ function applyDither() {
     tempImg.onload = () => {
         // Create a canvas to draw the image
         const canvas = document.createElement('canvas');
-        canvas.width = tempImg.width;
-        canvas.height = tempImg.height;
+        const { width: iw, height: ih } = constrainToViewport(tempImg.width, tempImg.height);
+        canvas.width = iw;
+        canvas.height = ih;
         const ctx = canvas.getContext('2d');
-        ctx.drawImage(tempImg, 0, 0);
+        ctx.drawImage(tempImg, 0, 0, iw, ih);
 
         // Get image data
-        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        const imageData = ctx.getImageData(0, 0, iw, ih);
 
         // Apply dithering
         ditherImageData(imageData, options);
@@ -203,6 +205,12 @@ function applyDither() {
         // Update dithered image display
         ditheredImage.src = canvas.toDataURL();
     };
+}
+
+// Scale dimensions down to fit viewport, preserving aspect ratio
+function constrainToViewport(width, height) {
+    const scale = Math.min(1, window.innerWidth / width, window.innerHeight / height);
+    return { width: Math.round(width * scale), height: Math.round(height * scale) };
 }
 
 // Ordered dithering implementation
