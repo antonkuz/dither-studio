@@ -279,7 +279,6 @@ function loadImageFromUrl(url) {
         const ctx = canvas.getContext('2d');
         ctx.drawImage(img, 0, 0);
         currentImageSrc = canvas.toDataURL();
-        originalImage.src = currentImageSrc;
         applyDither();
     };
     img.src = url;
