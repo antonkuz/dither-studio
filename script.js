@@ -1,6 +1,5 @@
 // Elements
 const fileInput = document.getElementById('fileInput');
-const originalImage = document.getElementById('originalImage');
 const ditheredImage = document.getElementById('ditheredImage');
 const ditherBtn = document.getElementById('ditherBtn');
 const webcamBtn = document.getElementById('webcamBtn');
@@ -97,9 +96,6 @@ function processVideoFrame(timestamp = 0) {
         const ctx = canvas.getContext('2d');
         ctx.drawImage(activeVideo, 0, 0);
         
-        // Show original frame
-        originalImage.src = canvas.toDataURL();
-        
         // Apply dithering
         const options = {
             step: parseInt(stepSelect.value),
@@ -164,11 +160,7 @@ function loadImage(file) {
     const reader = new FileReader();
     reader.onload = (e) => {
         currentImageSrc = e.target.result;
-        originalImage.src = currentImageSrc;
-        // Auto-apply dithering when image is loaded
-        originalImage.onload = () => {
-            applyDither();
-        };
+        applyDither();
     };
     reader.readAsDataURL(file);
 }
