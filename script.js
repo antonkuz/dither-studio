@@ -107,16 +107,10 @@ function processVideoFrame(timestamp = 0) {
     requestAnimationFrame(processVideoFrame);
 }
 
-// Build palette from selected checkboxes
 function getSelectedPalette() {
-    const checkboxes = colorPicker.querySelectorAll('input[type="checkbox"]:checked');
-    const palette = [];
-    checkboxes.forEach(cb => {
-        const rgb = cb.dataset.color.split(',').map(Number);
-        palette.push(rgb);
-    });
-    // Fallback to black & white if nothing selected
-    return palette.length >= 2 ? palette : [[0, 0, 0], [255, 255, 255]];
+    const selected = colorPicker.querySelector('input[type="radio"]:checked');
+    const color = selected ? selected.dataset.color.split(',').map(Number) : [255, 255, 255];
+    return [[0, 0, 0], color];
 }
 
 // Handle file selection
