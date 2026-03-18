@@ -268,6 +268,25 @@ function ditherImageData(imageData, options) {
     }
 }
 
+// Load image from URL
+function loadImageFromUrl(url) {
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+    img.onload = () => {
+        const canvas = document.createElement('canvas');
+        canvas.width = img.width;
+        canvas.height = img.height;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0);
+        currentImageSrc = canvas.toDataURL();
+        applyDither();
+    };
+    img.src = url;
+}
+
+// Load placeholder image on startup
+loadImageFromUrl('fishka.jpeg');
+
 // Apply dither button
 ditherBtn.addEventListener('click', applyDither);
 
