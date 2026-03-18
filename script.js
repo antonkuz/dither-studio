@@ -286,7 +286,7 @@ function loadImageFromUrl(url) {
 }
 
 // Load placeholder image on startup
-loadImageFromUrl('https://placehold.co/600x400');
+loadImageFromUrl('fishka.jpeg');
 
 // Apply dither button
 ditherBtn.addEventListener('click', applyDither);
