@@ -82,10 +82,8 @@
         }
 
         .images {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-            gap: 30px;
-            justify-items: center;
+            display: flex;
+            justify-content: center;
         }
 
         .image-box {
@@ -107,8 +105,8 @@
             display: block;
         }
 
-        #originalImage, #ditheredImage {
-            max-width: 500px;
+        #ditheredImage {
+            max-width: 100%;
             background: #222;
         }
 
@@ -239,10 +237,6 @@
         </div>
 
         <div class="images">
-            <div class="image-box">
-                <h3>Original</h3>
-                <img id="originalImage" src="" alt="Original image">
-            </div>
             <div class="image-box">
                 <h3>Dithered</h3>
                 <img id="ditheredImage" src="" alt="Dithered image">
