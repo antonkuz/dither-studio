@@ -38,6 +38,7 @@ function showDropState() {
     clearBtn.classList.add('hidden');
     currentImageSrc = null;
     ditheredImage.src = '';
+    ditheredImage.hidden = true;
     stopVideo();
 }
 
@@ -143,6 +144,7 @@ function processVideoFrame(timestamp = 0) {
         ditherImageData(imageData, options);
         ctx.putImageData(imageData, 0, 0);
         ditheredImage.src = canvas.toDataURL();
+        ditheredImage.hidden = false;
         showImageState();
     }
 
@@ -248,6 +250,7 @@ function applyDither() {
 
         // Update dithered image display
         ditheredImage.src = canvas.toDataURL();
+        ditheredImage.hidden = false;
         showImageState();
     };
 }
