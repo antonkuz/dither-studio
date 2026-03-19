@@ -290,8 +290,15 @@ loadImageFromUrl('fishka.jpeg');
 // Apply dither button
 ditherBtn.addEventListener('click', applyDither);
 
+// Recommended brightness per step to compensate for darkness
+const stepBrightnessMap = { 1: 0, 2: 6, 3: 1, 4: 8, 5: 1, 6: 9, 7: 3, 8: 10 };
+
 // Re-apply when options change
 stepSelect.addEventListener('input', () => {
+    const recommended = stepBrightnessMap[stepSelect.value];
+    if (recommended !== undefined) {
+        brightnessSlider.value = recommended;
+    }
     if (currentImageSrc) applyDither();
 });
 brightnessSlider.addEventListener('input', () => {
