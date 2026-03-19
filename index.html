@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DitherJS Demo</title>
+    <title>Dither Studio</title>
     <style>
         * {
             margin: 0;
@@ -19,104 +19,47 @@
             padding: 40px;
         }
 
-        h1 {
-            text-align: center;
-            margin-bottom: 30px;
-            font-weight: 300;
-            letter-spacing: 2px;
-        }
-
         .container {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
         }
 
-        .controls {
-            display: flex;
-            gap: 20px;
-            justify-content: center;
-            flex-wrap: wrap;
+        .header {
             margin-bottom: 30px;
         }
 
-        .control-group {
-            display: flex;
-            flex-direction: column;
-            gap: 5px;
+        .header h1 {
+            font-size: 24px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
         }
 
-        label {
-            font-size: 12px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+        .header p {
             color: #888;
+            font-size: 14px;
+            margin-top: 4px;
         }
 
-        input[type="range"] {
-            width: 100px;
-            cursor: pointer;
+        .main-layout {
+            display: grid;
+            grid-template-columns: 1fr 320px;
+            gap: 30px;
+            align-items: start;
         }
 
-        select, input[type="file"], button {
-            padding: 10px 15px;
-            border: 1px solid #333;
-            background: #16213e;
-            color: #eee;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-
-        select:hover, button:hover {
-            border-color: #0f3460;
-            background: #1a1a40;
-        }
-
-        button {
-            background: #e94560;
-            border-color: #e94560;
-            font-weight: bold;
-        }
-
-        button:hover {
-            background: #ff6b6b;
-        }
-
-        .images {
-            display: flex;
-            justify-content: center;
-        }
-
-        .image-box {
-            background: #16213e;
-            padding: 20px;
-            border-radius: 10px;
-            text-align: center;
-        }
-
-        .image-box h3 {
-            margin-bottom: 15px;
-            font-weight: 400;
-            color: #888;
-        }
-
-        .image-box img {
-            max-width: 100%;
-            height: auto;
-            display: block;
-        }
-
-        #ditheredImage {
-            max-width: 100%;
-            background: #222;
+        /* Left column */
+        .left-column {
+            min-width: 0;
         }
 
         .drop-zone {
             border: 2px dashed #333;
-            padding: 60px;
+            padding: 60px 40px;
             text-align: center;
-            border-radius: 10px;
-            margin-bottom: 30px;
+            border-radius: 12px;
+            margin-bottom: 24px;
             transition: all 0.3s;
+            background: #16213e;
         }
 
         .drop-zone.dragover {
@@ -124,17 +67,175 @@
             background: rgba(233, 69, 96, 0.1);
         }
 
+        .drop-zone-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+
+        .drop-zone h2 {
+            font-size: 18px;
+            font-weight: 500;
+            margin-bottom: 6px;
+        }
+
         .drop-zone p {
             color: #666;
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+
+        .drop-zone-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: 1px solid #333;
+            background: #16213e;
+            color: #eee;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.15s;
+        }
+
+        .btn:hover {
+            border-color: #0f3460;
+            background: #1a1a40;
+        }
+
+        .btn-primary {
+            background: #e94560;
+            border-color: #e94560;
+            font-weight: 600;
+        }
+
+        .btn-primary:hover {
+            background: #ff6b6b;
+            border-color: #ff6b6b;
+        }
+
+        .btn-outlined {
+            background: transparent;
+            border-color: #555;
+        }
+
+        .btn-outlined:hover {
+            border-color: #e94560;
+            background: rgba(233, 69, 96, 0.1);
+        }
+
+        .drop-zone.hidden {
+            display: none;
+        }
+
+        .image-output {
+            background: #16213e;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .clear-btn {
+            margin-bottom: 12px;
+        }
+
+        .clear-btn.hidden {
+            display: none;
+        }
+
+        .image-output img {
+            width: 100%;
+            height: auto;
+            display: block;
+            max-height: calc(100vh - 200px);
+            object-fit: contain;
+        }
+
+        #ditheredImage {
+            background: #111;
+        }
+
+        /* Right column — sidebar */
+        .sidebar {
+            background: #16213e;
+            border-radius: 12px;
+            padding: 24px;
+        }
+
+        .sidebar h3 {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        .sidebar h4 {
+            font-size: 13px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #888;
+            margin-top: 28px;
+            margin-bottom: 14px;
+        }
+
+        .slider-group {
+            margin-bottom: 18px;
+        }
+
+        .slider-group label {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 14px;
+            color: #ccc;
+            margin-bottom: 8px;
+        }
+
+        .slider-group label span {
+            font-size: 13px;
+            font-weight: 600;
+            color: #e94560;
+            min-width: 24px;
+            text-align: right;
+        }
+
+        input[type="range"] {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 6px;
+            border-radius: 3px;
+            background: #0f3460;
+            outline: none;
+            cursor: pointer;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #e94560;
+            cursor: pointer;
+        }
+
+        input[type="range"]::-moz-range-thumb {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #e94560;
+            cursor: pointer;
+            border: none;
         }
 
         .color-picker {
-            display: grid;
-            grid-template-columns: repeat(7, 1fr);
+            display: flex;
             gap: 8px;
-            justify-items: center;
-            max-width: 350px;
-            margin: 0 auto 30px;
+            flex-wrap: wrap;
         }
 
         .color-option {
@@ -148,9 +249,9 @@
         }
 
         .color-option .swatch {
-            width: 36px;
-            height: 36px;
-            border-radius: 6px;
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
             border: 3px solid #333;
             transition: all 0.15s;
         }
@@ -163,88 +264,148 @@
         .color-option:hover .swatch {
             transform: scale(1.1);
         }
+
+        .custom-color {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 14px;
+        }
+
+        .custom-color label {
+            font-size: 14px;
+            color: #ccc;
+        }
+
+        .custom-color input[type="color"] {
+            -webkit-appearance: none;
+            width: 40px;
+            height: 40px;
+            border: 3px solid #333;
+            border-radius: 8px;
+            background: none;
+            cursor: pointer;
+            padding: 0;
+        }
+
+        .custom-color input[type="color"]::-webkit-color-swatch-wrapper {
+            padding: 2px;
+        }
+
+        .custom-color input[type="color"]::-webkit-color-swatch {
+            border: none;
+            border-radius: 4px;
+        }
+
+        .custom-color .hex-value {
+            font-size: 13px;
+            color: #888;
+            font-family: monospace;
+        }
+
+        /* Hide native file input */
+        #fileInput {
+            display: none;
+        }
+
+        /* Responsive */
+        @media (max-width: 800px) {
+            body {
+                padding: 20px;
+            }
+
+            .main-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .sidebar {
+                order: -1;
+            }
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>DITHER.JS DEMO</h1>
-
-        <div class="drop-zone" id="dropZone">
-            <p>Drag & drop an image or video here, or use the file picker below</p>
+        <div class="header">
+            <h1>Dither Studio</h1>
+            <p>Apply dithering effects to your images</p>
         </div>
 
-        <div class="controls">
-            <div class="control-group">
-                <label>&nbsp;</label>
-                <button id="webcamBtn">Use Webcam</button>
-            </div>
-
-            <div class="control-group">
-                <label>Choose Image</label>
+        <div class="main-layout">
+            <div class="left-column">
+                <div class="drop-zone" id="dropZone">
+                    <div class="drop-zone-icon">&#x1F5BC;</div>
+                    <h2>Drop an image here</h2>
+                    <p>or choose an option below</p>
+                    <div class="drop-zone-buttons">
+                        <button class="btn btn-primary" id="chooseFileBtn">Choose File</button>
+                        <button class="btn btn-outlined" id="webcamBtn">Use Webcam</button>
+                        <button class="btn btn-outlined" id="exampleBtn">Example Image</button>
+                    </div>
+                </div>
                 <input type="file" id="fileInput" accept="image/*,video/*">
+
+                <button class="btn btn-outlined clear-btn hidden" id="clearBtn">Reset Input Source</button>
+                <div class="image-output">
+                    <img id="ditheredImage" src="" alt="Dithered image">
+                </div>
             </div>
 
-            <div class="control-group">
-                <label>Step</label>
-                <input type="range" id="step" min="1" max="10" value="1">
-            </div>
+            <div class="sidebar">
+                <h3>Dither Settings</h3>
 
-            <div class="control-group">
-                <label>Brightness</label>
-                <input type="range" id="brightness" min="-10" max="10" value="0">
-            </div>
+                <div class="slider-group">
+                    <label>Roughness <span id="stepValue">1</span></label>
+                    <input type="range" id="step" min="1" max="8" value="1">
+                </div>
 
-            <div class="control-group">
-                <label>&nbsp;</label>
-                <button id="ditherBtn">Apply Dither</button>
-            </div>
+                <div class="slider-group">
+                    <label>Brightness <span id="brightnessValue">0</span></label>
+                    <input type="range" id="brightness" min="-10" max="10" value="0">
+                </div>
 
-            <div class="control-group">
-                <label>&nbsp;</label>
-                <button id="copyBtn" title="Copy step &amp; brightness as JSON">Copy Params</button>
-            </div>
-        </div>
+                <h4>Color</h4>
 
-        <div class="color-picker" id="colorPicker">
-            <label class="color-option">
-                <input type="radio" name="ditherColor" data-color="255,255,255" checked>
-                <span class="swatch" style="background: rgb(255,255,255)"></span>
-            </label>
-            <label class="color-option">
-                <input type="radio" name="ditherColor" data-color="255,0,0">
-                <span class="swatch" style="background: rgb(255,0,0)"></span>
-            </label>
-            <label class="color-option">
-                <input type="radio" name="ditherColor" data-color="255,127,0">
-                <span class="swatch" style="background: rgb(255,127,0)"></span>
-            </label>
-            <label class="color-option">
-                <input type="radio" name="ditherColor" data-color="255,255,0">
-                <span class="swatch" style="background: rgb(228,203,67)"></span>
-            </label>
-            <label class="color-option">
-                <input type="radio" name="ditherColor" data-color="0,127,255">
-                <span class="swatch" style="background: rgb(0,127,255)"></span>
-            </label>
-            <label class="color-option">
-                <input type="radio" name="ditherColor" data-color="0,0,255">
-                <span class="swatch" style="background: rgb(0,0,255)"></span>
-            </label>
-            <label class="color-option">
-                <input type="radio" name="ditherColor" data-color="127,0,255">
-                <span class="swatch" style="background: rgb(127,0,255)"></span>
-            </label>
-        </div>
+                <div class="color-picker" id="colorPicker">
+                    <label class="color-option">
+                        <input type="radio" name="ditherColor" data-color="255,255,255" checked>
+                        <span class="swatch" style="background: rgb(255,255,255)"></span>
+                    </label>
+                    <label class="color-option">
+                        <input type="radio" name="ditherColor" data-color="255,0,0">
+                        <span class="swatch" style="background: rgb(255,0,0)"></span>
+                    </label>
+                    <label class="color-option">
+                        <input type="radio" name="ditherColor" data-color="255,127,0">
+                        <span class="swatch" style="background: rgb(255,127,0)"></span>
+                    </label>
+                    <label class="color-option">
+                        <input type="radio" name="ditherColor" data-color="246,194,3">
+                        <span class="swatch" style="background: #f6c203"></span>
+                    </label>
+                    <label class="color-option">
+                        <input type="radio" name="ditherColor" data-color="0,127,255">
+                        <span class="swatch" style="background: rgb(0,127,255)"></span>
+                    </label>
+                    <label class="color-option">
+                        <input type="radio" name="ditherColor" data-color="0,0,255">
+                        <span class="swatch" style="background: rgb(0,0,255)"></span>
+                    </label>
+                    <label class="color-option">
+                        <input type="radio" name="ditherColor" data-color="127,0,255">
+                        <span class="swatch" style="background: rgb(127,0,255)"></span>
+                    </label>
+                </div>
 
-        <div class="images">
-            <div class="image-box">
-                <h3>Dithered</h3>
-                <img id="ditheredImage" src="" alt="Dithered image">
+                <div class="custom-color">
+                    <label>Custom</label>
+                    <input type="color" id="customColor" value="#ff00ff">
+                    <span class="hex-value" id="customColorHex">#ff00ff</span>
+                </div>
             </div>
         </div>
     </div>
 
-    <script src="https://unpkg.com/ditherjs@1.4.2/dist/ditherjs.min.js"></script>
     <script src="script.js"></script>
 </body>
 </html>

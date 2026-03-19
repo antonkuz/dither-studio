@@ -1,24 +1,22 @@
 // Elements
 const fileInput = document.getElementById('fileInput');
+const chooseFileBtn = document.getElementById('chooseFileBtn');
 const ditheredImage = document.getElementById('ditheredImage');
-const ditherBtn = document.getElementById('ditherBtn');
 const webcamBtn = document.getElementById('webcamBtn');
+const exampleBtn = document.getElementById('exampleBtn');
 const stepSelect = document.getElementById('step');
+const stepValue = document.getElementById('stepValue');
 const brightnessSlider = document.getElementById('brightness');
+const brightnessValue = document.getElementById('brightnessValue');
 const dropZone = document.getElementById('dropZone');
 const colorPicker = document.getElementById('colorPicker');
-const copyBtn = document.getElementById('copyBtn');
-
-copyBtn.addEventListener('click', () => {
-    const json = JSON.stringify({ step: +stepSelect.value, brightness: +brightnessSlider.value });
-    navigator.clipboard.writeText(json);
-    const orig = copyBtn.textContent;
-    copyBtn.textContent = 'Copied!';
-    setTimeout(() => copyBtn.textContent = orig, 1000);
-});
+const customColor = document.getElementById('customColor');
+const customColorHex = document.getElementById('customColorHex');
+const clearBtn = document.getElementById('clearBtn');
 
 // Current loaded image data URL
 let currentImageSrc = null;
+let isDefaultImage = false;
 
 // Video state (shared between webcam and uploaded video)
 let activeVideo = null;
@@ -27,6 +25,39 @@ let videoRunning = false;
 let lastFrameTime = 0;
 const TARGET_FPS = 12;
 const FRAME_INTERVAL = 1000 / TARGET_FPS;
+
+// Toggle between drop zone and image display
+function showImageState() {
+    dropZone.classList.add('hidden');
+    clearBtn.classList.remove('hidden');
+    clearBtn.textContent = isDefaultImage ? 'Use Your Own Image' : 'Reset Image';
+}
+
+function showDropState() {
+    dropZone.classList.remove('hidden');
+    clearBtn.classList.add('hidden');
+    currentImageSrc = null;
+    ditheredImage.src = '';
+    stopVideo();
+}
+
+clearBtn.addEventListener('click', showDropState);
+
+// Choose File button triggers hidden file input
+chooseFileBtn.addEventListener('click', () => fileInput.click());
+
+// Example Image button
+exampleBtn.addEventListener('click', () => loadImageFromUrl('fishka.jpeg'));
+
+// Custom color input
+customColor.addEventListener('input', () => {
+    const hex = customColor.value;
+    customColorHex.textContent = hex;
+    // Deselect preset swatches and apply custom color
+    const radios = colorPicker.querySelectorAll('input[type="radio"]');
+    radios.forEach(r => r.checked = false);
+    if (currentImageSrc) applyDither();
+});
 
 // Stop any running video
 function stopVideo() {
@@ -48,15 +79,17 @@ webcamBtn.addEventListener('click', async () => {
         stopVideo();
     } else {
         stopVideo(); // Stop any uploaded video first
+        isDefaultImage = false;
         try {
             webcamStream = await navigator.mediaDevices.getUserMedia({ video: true });
             activeVideo = document.createElement('video');
             activeVideo.srcObject = webcamStream;
             activeVideo.play();
-            
+
             activeVideo.onloadedmetadata = () => {
                 videoRunning = true;
                 webcamBtn.textContent = 'Stop Webcam';
+                showImageState();
                 processVideoFrame();
             };
         } catch (err) {
@@ -67,17 +100,19 @@ webcamBtn.addEventListener('click', async () => {
 
 // Load uploaded video
 function loadVideo(file) {
+    isDefaultImage = false;
     stopVideo(); // Stop any running video
-    
+
     const url = URL.createObjectURL(file);
     activeVideo = document.createElement('video');
     activeVideo.src = url;
     activeVideo.loop = true;
     activeVideo.muted = true;
     activeVideo.play();
-    
+
     activeVideo.onloadedmetadata = () => {
         videoRunning = true;
+        showImageState();
         processVideoFrame();
     };
 }
@@ -85,38 +120,47 @@ function loadVideo(file) {
 // Process video frames (shared between webcam and uploaded video)
 function processVideoFrame(timestamp = 0) {
     if (!videoRunning || !activeVideo) return;
-    
+
     // Limit frame rate
     if (timestamp - lastFrameTime >= FRAME_INTERVAL) {
         lastFrameTime = timestamp;
-        
+
         const canvas = document.createElement('canvas');
         const { width: vw, height: vh } = constrainToViewport(activeVideo.videoWidth, activeVideo.videoHeight);
         canvas.width = vw;
         canvas.height = vh;
         const ctx = canvas.getContext('2d');
         ctx.drawImage(activeVideo, 0, 0, vw, vh);
-        
+
         // Apply dithering
         const options = {
             step: parseInt(stepSelect.value),
             palette: getSelectedPalette(),
             brightness: parseInt(brightnessSlider.value) * 12
         };
-        
+
         const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
         ditherImageData(imageData, options);
         ctx.putImageData(imageData, 0, 0);
         ditheredImage.src = canvas.toDataURL();
+        showImageState();
     }
-    
+
     requestAnimationFrame(processVideoFrame);
 }
 
 function getSelectedPalette() {
     const selected = colorPicker.querySelector('input[type="radio"]:checked');
-    const color = selected ? selected.dataset.color.split(',').map(Number) : [255, 255, 255];
-    return [[0, 0, 0], color];
+    if (selected) {
+        const color = selected.dataset.color.split(',').map(Number);
+        return [[0, 0, 0], color];
+    }
+    // Use custom color if no preset is selected
+    const hex = customColor.value;
+    const r = parseInt(hex.slice(1, 3), 16);
+    const g = parseInt(hex.slice(3, 5), 16);
+    const b = parseInt(hex.slice(5, 7), 16);
+    return [[0, 0, 0], [r, g, b]];
 }
 
 // Handle file selection
@@ -158,6 +202,7 @@ dropZone.addEventListener('drop', (e) => {
 
 // Load image from file
 function loadImage(file) {
+    isDefaultImage = false;
     const reader = new FileReader();
     reader.onload = (e) => {
         currentImageSrc = e.target.result;
@@ -169,7 +214,6 @@ function loadImage(file) {
 // Apply dithering
 function applyDither() {
     if (!currentImageSrc) {
-        alert('Please load an image first!');
         return;
     }
 
@@ -204,12 +248,19 @@ function applyDither() {
 
         // Update dithered image display
         ditheredImage.src = canvas.toDataURL();
+        showImageState();
     };
 }
 
 // Scale dimensions down to fit viewport, preserving aspect ratio
 function constrainToViewport(width, height) {
-    const scale = Math.min(1, window.innerWidth / width, window.innerHeight / height);
+    // Account for body padding (40px each side), sidebar (320px + 30px gap), and header (~80px)
+    const bodyPadding = 40 * 2;
+    const sidebarWidth = 320 + 30;
+    const headerHeight = 80;
+    const availWidth = window.innerWidth - bodyPadding - sidebarWidth;
+    const availHeight = window.innerHeight - bodyPadding - headerHeight;
+    const scale = Math.min(1, availWidth / width, availHeight / height);
     return { width: Math.round(width * scale), height: Math.round(height * scale) };
 }
 
@@ -225,8 +276,8 @@ function ditherImageData(imageData, options) {
         let minDist = Infinity;
         let closest = palette[0];
         for (const color of palette) {
-            const dist = Math.pow(r - color[0], 2) + 
-                        Math.pow(g - color[1], 2) + 
+            const dist = Math.pow(r - color[0], 2) +
+                        Math.pow(g - color[1], 2) +
                         Math.pow(b - color[2], 2);
             if (dist < minDist) {
                 minDist = dist;
@@ -248,13 +299,13 @@ function ditherImageData(imageData, options) {
         for (let x = 0; x < width; x += step) {
             const i = (y * width + x) * 4;
             const threshold = (bayerMatrix[y % 4][x % 4] / 16 - 0.5) * 128;
-            
+
             const r = Math.min(255, Math.max(0, data[i] + brightness + threshold));
             const g = Math.min(255, Math.max(0, data[i + 1] + brightness + threshold));
             const b = Math.min(255, Math.max(0, data[i + 2] + brightness + threshold));
-            
+
             const [nr, ng, nb] = closestColor(r, g, b);
-            
+
             // Fill the step x step block
             for (let dy = 0; dy < step && y + dy < height; dy++) {
                 for (let dx = 0; dx < step && x + dx < width; dx++) {
@@ -285,16 +336,35 @@ function loadImageFromUrl(url) {
 }
 
 // Load placeholder image on startup
+isDefaultImage = true;
 loadImageFromUrl('fishka.jpeg');
 
 // Apply dither button
 ditherBtn.addEventListener('click', applyDither);
 
+// Recommended brightness per step to compensate for darkness
+const stepBrightnessMap = { 1: 0, 2: 6, 3: 1, 4: 8, 5: 1, 6: 9, 7: 3, 8: 10 };
+
+// Update slider value displays
+function updateSliderValues() {
+    stepValue.textContent = stepSelect.value;
+    brightnessValue.textContent = brightnessSlider.value;
+}
+
+// Initialize displayed slider values
+updateSliderValues();
+
 // Re-apply when options change
 stepSelect.addEventListener('input', () => {
+    const recommended = stepBrightnessMap[stepSelect.value];
+    if (recommended !== undefined) {
+        brightnessSlider.value = recommended;
+    }
+    updateSliderValues();
     if (currentImageSrc) applyDither();
 });
 brightnessSlider.addEventListener('input', () => {
+    updateSliderValues();
     if (currentImageSrc) applyDither();
 });
 colorPicker.addEventListener('change', () => {
