@@ -13,8 +13,8 @@
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: #F5F5F7;
-            color: #1A1A2E;
+            background: #1a1a2e;
+            color: #eee;
             min-height: 100vh;
             padding: 40px;
         }
@@ -47,23 +47,23 @@
         }
 
         .drop-zone {
-            border: 2px dashed #D1D5DB;
+            border: 2px dashed #333;
             padding: 60px 40px;
             text-align: center;
             border-radius: 12px;
             margin-bottom: 24px;
             transition: all 0.3s;
-            background: #FFFFFF;
+            background: #16213e;
         }
 
         .drop-zone.dragover {
             border-color: #6366F1;
-            background: rgba(99, 102, 241, 0.06);
+            background: rgba(99, 102, 241, 0.1);
         }
 
         .drop-zone-icon {
             margin-bottom: 16px;
-            color: #9CA3AF;
+            color: #666;
         }
 
         .drop-zone-icon svg {
@@ -75,11 +75,10 @@
             font-size: 18px;
             font-weight: 500;
             margin-bottom: 6px;
-            color: #1A1A2E;
         }
 
         .drop-zone p {
-            color: #9CA3AF;
+            color: #666;
             font-size: 14px;
             margin-bottom: 20px;
         }
@@ -93,9 +92,9 @@
 
         .btn {
             padding: 10px 20px;
-            border: 1px solid #D1D5DB;
-            background: #FFFFFF;
-            color: #1A1A2E;
+            border: 1px solid #333;
+            background: #16213e;
+            color: #eee;
             border-radius: 6px;
             cursor: pointer;
             font-size: 14px;
@@ -107,30 +106,30 @@
         }
 
         .btn:hover {
-            border-color: #9CA3AF;
-            background: #F9FAFB;
+            border-color: #0f3460;
+            background: #1a1a40;
         }
 
         .btn-primary {
-            background: #1A1A2E;
-            border-color: #1A1A2E;
+            background: #6366F1;
+            border-color: #6366F1;
             color: #FFFFFF;
             font-weight: 600;
         }
 
         .btn-primary:hover {
-            background: #2D2D4E;
-            border-color: #2D2D4E;
+            background: #4f46e5;
+            border-color: #4f46e5;
         }
 
         .btn-outlined {
-            background: #FFFFFF;
-            border-color: #D1D5DB;
+            background: transparent;
+            border-color: #555;
         }
 
         .btn-outlined:hover {
-            border-color: #9CA3AF;
-            background: #F9FAFB;
+            border-color: #6366F1;
+            background: rgba(99, 102, 241, 0.1);
         }
 
         .btn svg {
@@ -144,7 +143,7 @@
         }
 
         .image-output {
-            background: #FFFFFF;
+            background: #16213e;
             border-radius: 12px;
             overflow: hidden;
         }
@@ -166,23 +165,20 @@
         }
 
         #ditheredImage {
-            background: #F0F0F0;
+            background: #111;
         }
 
         /* Right column — sidebar */
         .sidebar {
-            background: #FFFFFF;
+            background: #16213e;
             border-radius: 12px;
             padding: 24px;
-            border: 1px solid #E5E7EB;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
         }
 
         .sidebar h3 {
             font-size: 16px;
             font-weight: 600;
             margin-bottom: 20px;
-            color: #1A1A2E;
         }
 
         .sidebar h4 {
@@ -190,7 +186,7 @@
             font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 1px;
-            color: #6B7280;
+            color: #888;
             margin-top: 28px;
             margin-bottom: 14px;
         }
@@ -204,7 +200,7 @@
             justify-content: space-between;
             align-items: center;
             font-size: 14px;
-            color: #374151;
+            color: #ccc;
             margin-bottom: 8px;
         }
 
@@ -221,7 +217,7 @@
             width: 100%;
             height: 6px;
             border-radius: 3px;
-            background: #E5E7EB;
+            background: #0f3460;
             outline: none;
             cursor: pointer;
         }
@@ -264,13 +260,13 @@
             width: 40px;
             height: 40px;
             border-radius: 8px;
-            border: 3px solid #E5E7EB;
+            border: 3px solid #333;
             transition: all 0.15s;
         }
 
         .color-option input:checked + .swatch {
             border-color: #6366F1;
-            box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.3);
+            box-shadow: 0 0 10px rgba(99, 102, 241, 0.5);
         }
 
         .color-option:hover .swatch {
@@ -286,14 +282,14 @@
 
         .custom-color label {
             font-size: 14px;
-            color: #374151;
+            color: #ccc;
         }
 
         .custom-color input[type="color"] {
             -webkit-appearance: none;
             width: 40px;
             height: 40px;
-            border: 3px solid #E5E7EB;
+            border: 3px solid #333;
             border-radius: 8px;
             background: none;
             cursor: pointer;
@@ -311,7 +307,7 @@
 
         .custom-color .hex-value {
             font-size: 13px;
-            color: #6B7280;
+            color: #888;
             font-family: monospace;
         }
 
@@ -324,7 +320,7 @@
         .mobile-divider {
             display: none;
             border: none;
-            border-top: 1px solid #E5E7EB;
+            border-top: 1px solid #333;
             margin: 0;
         }
 
