@@ -70,7 +70,7 @@ function stopVideo() {
         activeVideo.pause();
         activeVideo = null;
     }
-    webcamBtn.textContent = 'Use Webcam';
+    webcamBtn.querySelector('.btn-label').textContent = 'Use Webcam';
 }
 
 // Webcam toggle
@@ -88,7 +88,7 @@ webcamBtn.addEventListener('click', async () => {
 
             activeVideo.onloadedmetadata = () => {
                 videoRunning = true;
-                webcamBtn.textContent = 'Stop Webcam';
+                webcamBtn.querySelector('.btn-label').textContent = 'Stop Webcam';
                 showImageState();
                 processVideoFrame();
             };
@@ -254,9 +254,9 @@ function applyDither() {
 
 // Scale dimensions down to fit viewport, preserving aspect ratio
 function constrainToViewport(width, height) {
-    // Account for body padding (40px each side), sidebar (320px + 30px gap), and header (~80px)
-    const bodyPadding = 40 * 2;
-    const sidebarWidth = 320 + 30;
+    const isMobile = window.innerWidth <= 800;
+    const bodyPadding = isMobile ? 16 * 2 : 40 * 2;
+    const sidebarWidth = isMobile ? 0 : 320 + 30;
     const headerHeight = 80;
     const availWidth = window.innerWidth - bodyPadding - sidebarWidth;
     const availHeight = window.innerHeight - bodyPadding - headerHeight;
@@ -339,16 +339,13 @@ function loadImageFromUrl(url) {
 isDefaultImage = true;
 loadImageFromUrl('fishka.jpeg');
 
-// Apply dither button
-ditherBtn.addEventListener('click', applyDither);
-
 // Recommended brightness per step to compensate for darkness
 const stepBrightnessMap = { 1: 0, 2: 6, 3: 1, 4: 8, 5: 1, 6: 9, 7: 3, 8: 10 };
 
 // Update slider value displays
 function updateSliderValues() {
     stepValue.textContent = stepSelect.value;
-    brightnessValue.textContent = brightnessSlider.value;
+    brightnessValue.textContent = ((parseInt(brightnessSlider.value) + 10) * 10) + '%';
 }
 
 // Initialize displayed slider values
