@@ -113,6 +113,15 @@
             display: none;
         }
 
+        .compare-btn {
+            margin-bottom: 12px;
+            user-select: none;
+        }
+
+        .compare-btn.hidden {
+            display: none;
+        }
+
         /* Image output */
         .image-output {
             background: #111;
@@ -395,6 +404,7 @@
                 <input type="file" id="fileInput" accept="image/*,video/*">
 
                 <button class="nes-btn is-error clear-btn hidden" id="clearBtn">Reset Input Source</button>
+                <button class="nes-btn compare-btn hidden" id="compareBtn">Hold to compare</button>
                 <div class="image-output">
                     <img id="ditheredImage" src="" alt="Dithered image" hidden>
                 </div>
