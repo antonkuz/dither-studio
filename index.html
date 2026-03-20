@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dither Studio</title>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <link href="https://unpkg.com/nes.css@2.3.0/css/nes.min.css" rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -12,7 +14,7 @@
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-family: 'Press Start 2P', cursive;
             background: #1a1a2e;
             color: #eee;
             min-height: 100vh;
@@ -25,18 +27,19 @@
         }
 
         .header {
-            margin-bottom: 30px;
+            margin-bottom: 36px;
         }
 
         .header h1 {
-            font-size: 24px;
-            font-weight: 700;
-            letter-spacing: 0.5px;
+            font-size: 20px;
+            letter-spacing: 1px;
+            color: #fff;
+            text-shadow: 4px 4px 0 #6366F1;
         }
 
         .main-layout {
             display: grid;
-            grid-template-columns: 1fr 320px;
+            grid-template-columns: 1fr 340px;
             gap: 30px;
             align-items: start;
         }
@@ -46,24 +49,29 @@
             min-width: 0;
         }
 
+        /* Drop zone */
         .drop-zone {
-            border: 2px dashed #333;
-            padding: 60px 40px;
-            text-align: center;
-            border-radius: 12px;
+            padding: 0;
             margin-bottom: 24px;
-            transition: all 0.3s;
-            background: #16213e;
         }
 
-        .drop-zone.dragover {
-            border-color: #6366F1;
-            background: rgba(99, 102, 241, 0.1);
+        .drop-zone.hidden {
+            display: none;
+        }
+
+        .drop-zone-inner {
+            padding: 48px 32px;
+            text-align: center;
+        }
+
+        .drop-zone.dragover .nes-container {
+            border-color: #6366F1 !important;
+            background: rgba(99, 102, 241, 0.08);
         }
 
         .drop-zone-icon {
-            margin-bottom: 16px;
-            color: #666;
+            margin-bottom: 20px;
+            color: #888;
         }
 
         .drop-zone-icon svg {
@@ -72,88 +80,47 @@
         }
 
         .drop-zone h2 {
-            font-size: 18px;
-            font-weight: 500;
-            margin-bottom: 6px;
+            font-size: 11px;
+            margin-bottom: 10px;
+            color: #fff;
         }
 
         .drop-zone p {
-            color: #666;
-            font-size: 14px;
-            margin-bottom: 20px;
+            color: #888;
+            font-size: 8px;
+            margin-bottom: 28px;
+            line-height: 1.8;
         }
 
         .drop-zone-buttons {
             display: flex;
-            gap: 10px;
+            gap: 12px;
             justify-content: center;
             flex-wrap: wrap;
         }
 
-        .btn {
-            padding: 10px 20px;
-            border: 1px solid #333;
-            background: #16213e;
-            color: #eee;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 14px;
-            font-weight: 500;
-            transition: all 0.15s;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
+        .drop-zone-buttons .nes-btn {
+            font-size: 8px;
         }
 
-        .btn:hover {
-            border-color: #0f3460;
-            background: #1a1a40;
-        }
-
-        .btn-primary {
-            background: #6366F1;
-            border-color: #6366F1;
-            color: #FFFFFF;
-            font-weight: 600;
-        }
-
-        .btn-primary:hover {
-            background: #4f46e5;
-            border-color: #4f46e5;
-        }
-
-        .btn-outlined {
-            background: transparent;
-            border-color: #555;
-        }
-
-        .btn-outlined:hover {
-            border-color: #6366F1;
-            background: rgba(99, 102, 241, 0.1);
-        }
-
-        .btn svg {
-            width: 16px;
-            height: 16px;
-            flex-shrink: 0;
-        }
-
-        .drop-zone.hidden {
-            display: none;
-        }
-
-        .image-output {
-            background: #16213e;
-            border-radius: 12px;
-            overflow: hidden;
-        }
-
+        /* Clear button */
         .clear-btn {
-            margin-bottom: 12px;
+            margin-bottom: 16px;
+            font-size: 8px;
         }
 
         .clear-btn.hidden {
             display: none;
+        }
+
+        /* Image output */
+        .image-output {
+            background: #111;
+            overflow: hidden;
+            /* NES pixel border via box-shadow trick */
+            box-shadow:
+                0 0 0 4px #111,
+                0 0 0 6px #eee;
         }
 
         .image-output img {
@@ -172,44 +139,49 @@
             display: none;
         }
 
-        /* Right column — sidebar */
-        .sidebar {
-            background: #16213e;
-            border-radius: 12px;
-            padding: 24px;
+        /* Sidebar NES container override for dark bg */
+        .sidebar-container {
+            background: #16213e !important;
+            color: #eee !important;
         }
 
-        .sidebar h3 {
-            font-size: 16px;
-            font-weight: 600;
-            margin-bottom: 20px;
+        .sidebar-container::after,
+        .sidebar-container::before {
+            background: #16213e !important;
+        }
+
+        .sidebar-container .title {
+            background: #16213e !important;
+            font-size: 10px;
+            color: #6366F1 !important;
         }
 
         .sidebar h4 {
-            font-size: 13px;
+            font-size: 8px;
             font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 1px;
             color: #888;
-            margin-top: 28px;
+            margin-top: 24px;
             margin-bottom: 14px;
         }
 
+        /* Sliders */
         .slider-group {
-            margin-bottom: 18px;
+            margin-bottom: 20px;
         }
 
         .slider-group label {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            font-size: 14px;
+            font-size: 8px;
             color: #ccc;
-            margin-bottom: 8px;
+            margin-bottom: 10px;
         }
 
         .slider-group label span {
-            font-size: 13px;
+            font-size: 8px;
             font-weight: 600;
             color: #6366F1;
             min-width: 24px;
@@ -219,31 +191,35 @@
         input[type="range"] {
             -webkit-appearance: none;
             width: 100%;
-            height: 6px;
-            border-radius: 3px;
+            height: 8px;
             background: #0f3460;
             outline: none;
             cursor: pointer;
+            /* pixelated look */
+            border: 2px solid #eee;
+            box-shadow: 2px 2px 0 #000;
         }
 
         input[type="range"]::-webkit-slider-thumb {
             -webkit-appearance: none;
-            width: 18px;
-            height: 18px;
-            border-radius: 50%;
+            width: 20px;
+            height: 20px;
             background: #6366F1;
             cursor: pointer;
+            border: 2px solid #eee;
+            box-shadow: 2px 2px 0 #000;
         }
 
         input[type="range"]::-moz-range-thumb {
-            width: 18px;
-            height: 18px;
-            border-radius: 50%;
+            width: 20px;
+            height: 20px;
             background: #6366F1;
             cursor: pointer;
-            border: none;
+            border: 2px solid #eee;
+            box-shadow: 2px 2px 0 #000;
         }
 
+        /* Color swatches */
         .color-picker {
             display: flex;
             gap: 8px;
@@ -261,40 +237,41 @@
         }
 
         .color-option .swatch {
-            width: 40px;
-            height: 40px;
-            border-radius: 8px;
-            border: 3px solid #333;
-            transition: all 0.15s;
+            width: 36px;
+            height: 36px;
+            border: 4px solid #555;
+            box-shadow: 3px 3px 0 #000;
+            transition: transform 0.1s;
         }
 
         .color-option input:checked + .swatch {
             border-color: #6366F1;
-            box-shadow: 0 0 10px rgba(99, 102, 241, 0.5);
+            box-shadow: 3px 3px 0 #6366F1;
         }
 
         .color-option:hover .swatch {
             transform: scale(1.1);
         }
 
+        /* Custom color */
         .custom-color {
             display: flex;
             align-items: center;
             gap: 10px;
-            margin-top: 14px;
+            margin-top: 16px;
         }
 
         .custom-color label {
-            font-size: 14px;
+            font-size: 8px;
             color: #ccc;
         }
 
         .custom-color input[type="color"] {
             -webkit-appearance: none;
-            width: 40px;
-            height: 40px;
-            border: 3px solid #333;
-            border-radius: 8px;
+            width: 36px;
+            height: 36px;
+            border: 4px solid #555;
+            box-shadow: 3px 3px 0 #000;
             background: none;
             cursor: pointer;
             padding: 0;
@@ -306,13 +283,12 @@
 
         .custom-color input[type="color"]::-webkit-color-swatch {
             border: none;
-            border-radius: 4px;
         }
 
         .custom-color .hex-value {
-            font-size: 13px;
+            font-size: 8px;
             color: #888;
-            font-family: monospace;
+            font-family: 'Press Start 2P', monospace;
         }
 
         /* Hide native file input */
@@ -324,8 +300,32 @@
         .mobile-divider {
             display: none;
             border: none;
-            border-top: 1px solid #333;
+            border-top: 4px solid #eee;
+            box-shadow: 0 2px 0 #000;
             margin: 0;
+        }
+
+        /* NES container dark override */
+        .nes-container.is-dark {
+            background-color: #16213e;
+            color: #eee;
+        }
+
+        .nes-container.is-dark::after,
+        .nes-container.is-dark::before {
+            background-color: #16213e;
+        }
+
+        .nes-container.is-dark.with-title > .title {
+            background-color: #16213e;
+            color: #6366F1;
+            font-size: 9px;
+        }
+
+        /* Drop zone NES container dark */
+        .drop-zone .nes-container.is-dark::after,
+        .drop-zone .nes-container.is-dark::before {
+            background-color: #16213e;
         }
 
         /* Responsive */
@@ -343,16 +343,17 @@
                 display: block;
             }
 
-            .drop-zone {
-                padding: 40px 24px;
+            .drop-zone-inner {
+                padding: 32px 16px;
             }
 
             .drop-zone-buttons {
                 flex-direction: column;
             }
 
-            .drop-zone-buttons .btn {
-                justify-content: center;
+            .drop-zone-buttons .nes-btn {
+                width: 100%;
+                text-align: center;
             }
         }
     </style>
@@ -366,44 +367,34 @@
         <div class="main-layout">
             <div class="left-column">
                 <div class="drop-zone" id="dropZone">
-                    <div class="drop-zone-icon">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                            <rect x="3" y="3" width="18" height="18" rx="2"/>
-                            <circle cx="8.5" cy="8.5" r="1.5"/>
-                            <path d="M21 15l-5-5L5 21"/>
-                        </svg>
-                    </div>
-                    <h2>Choose your image source</h2>
-                    <p>Drop an image here, or select an option below</p>
-                    <div class="drop-zone-buttons">
-                        <button class="btn btn-primary" id="chooseFileBtn">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-                                <polyline points="17 8 12 3 7 8"/>
-                                <line x1="12" y1="3" x2="12" y2="15"/>
-                            </svg>
-                            <span class="btn-label">Choose File</span>
-                        </button>
-                        <button class="btn btn-outlined" id="webcamBtn">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
-                                <circle cx="12" cy="13" r="4"/>
-                            </svg>
-                            <span class="btn-label">Use Webcam</span>
-                        </button>
-                        <button class="btn btn-outlined" id="exampleBtn">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <rect x="3" y="3" width="18" height="18" rx="2"/>
-                                <circle cx="8.5" cy="8.5" r="1.5"/>
-                                <path d="M21 15l-5-5L5 21"/>
-                            </svg>
-                            <span class="btn-label">Example Image</span>
-                        </button>
-                    </div>
+                    <section class="nes-container is-dark">
+                        <div class="drop-zone-inner">
+                            <div class="drop-zone-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                    <rect x="3" y="3" width="18" height="18" rx="2"/>
+                                    <circle cx="8.5" cy="8.5" r="1.5"/>
+                                    <path d="M21 15l-5-5L5 21"/>
+                                </svg>
+                            </div>
+                            <h2>Choose your image source</h2>
+                            <p>Drop an image here, or select an option below</p>
+                            <div class="drop-zone-buttons">
+                                <button class="nes-btn is-primary" id="chooseFileBtn">
+                                    <span class="btn-label">Choose File</span>
+                                </button>
+                                <button class="nes-btn is-warning" id="webcamBtn">
+                                    <span class="btn-label">Use Webcam</span>
+                                </button>
+                                <button class="nes-btn is-success" id="exampleBtn">
+                                    <span class="btn-label">Example Image</span>
+                                </button>
+                            </div>
+                        </div>
+                    </section>
                 </div>
                 <input type="file" id="fileInput" accept="image/*,video/*">
 
-                <button class="btn btn-outlined clear-btn hidden" id="clearBtn">Reset Input Source</button>
+                <button class="nes-btn is-error clear-btn hidden" id="clearBtn">Reset Input Source</button>
                 <div class="image-output">
                     <img id="ditheredImage" src="" alt="Dithered image" hidden>
                 </div>
@@ -412,56 +403,58 @@
             <hr class="mobile-divider">
 
             <div class="sidebar">
-                <h3>Dither Settings</h3>
+                <section class="nes-container with-title is-dark sidebar-container">
+                    <p class="title">Settings</p>
 
-                <div class="slider-group">
-                    <label>Roughness <span id="stepValue">1</span></label>
-                    <input type="range" id="step" min="1" max="8" value="1">
-                </div>
+                    <div class="slider-group">
+                        <label>Roughness <span id="stepValue">1</span></label>
+                        <input type="range" id="step" min="1" max="8" value="1">
+                    </div>
 
-                <div class="slider-group">
-                    <label>Brightness <span id="brightnessValue">100%</span></label>
-                    <input type="range" id="brightness" min="-10" max="10" value="0">
-                </div>
+                    <div class="slider-group">
+                        <label>Brightness <span id="brightnessValue">100%</span></label>
+                        <input type="range" id="brightness" min="-10" max="10" value="0">
+                    </div>
 
-                <h4>Color</h4>
+                    <h4>Color</h4>
 
-                <div class="color-picker" id="colorPicker">
-                    <label class="color-option">
-                        <input type="radio" name="ditherColor" data-color="255,255,255" checked>
-                        <span class="swatch" style="background: rgb(255,255,255)"></span>
-                    </label>
-                    <label class="color-option">
-                        <input type="radio" name="ditherColor" data-color="255,0,0">
-                        <span class="swatch" style="background: rgb(255,0,0)"></span>
-                    </label>
-                    <label class="color-option">
-                        <input type="radio" name="ditherColor" data-color="255,127,0">
-                        <span class="swatch" style="background: rgb(255,127,0)"></span>
-                    </label>
-                    <label class="color-option">
-                        <input type="radio" name="ditherColor" data-color="246,194,3">
-                        <span class="swatch" style="background: #f6c203"></span>
-                    </label>
-                    <label class="color-option">
-                        <input type="radio" name="ditherColor" data-color="0,127,255">
-                        <span class="swatch" style="background: rgb(0,127,255)"></span>
-                    </label>
-                    <label class="color-option">
-                        <input type="radio" name="ditherColor" data-color="0,0,255">
-                        <span class="swatch" style="background: rgb(0,0,255)"></span>
-                    </label>
-                    <label class="color-option">
-                        <input type="radio" name="ditherColor" data-color="127,0,255">
-                        <span class="swatch" style="background: rgb(127,0,255)"></span>
-                    </label>
-                </div>
+                    <div class="color-picker" id="colorPicker">
+                        <label class="color-option">
+                            <input type="radio" name="ditherColor" data-color="255,255,255" checked>
+                            <span class="swatch" style="background: rgb(255,255,255)"></span>
+                        </label>
+                        <label class="color-option">
+                            <input type="radio" name="ditherColor" data-color="255,0,0">
+                            <span class="swatch" style="background: rgb(255,0,0)"></span>
+                        </label>
+                        <label class="color-option">
+                            <input type="radio" name="ditherColor" data-color="255,127,0">
+                            <span class="swatch" style="background: rgb(255,127,0)"></span>
+                        </label>
+                        <label class="color-option">
+                            <input type="radio" name="ditherColor" data-color="246,194,3">
+                            <span class="swatch" style="background: #f6c203"></span>
+                        </label>
+                        <label class="color-option">
+                            <input type="radio" name="ditherColor" data-color="0,127,255">
+                            <span class="swatch" style="background: rgb(0,127,255)"></span>
+                        </label>
+                        <label class="color-option">
+                            <input type="radio" name="ditherColor" data-color="0,0,255">
+                            <span class="swatch" style="background: rgb(0,0,255)"></span>
+                        </label>
+                        <label class="color-option">
+                            <input type="radio" name="ditherColor" data-color="127,0,255">
+                            <span class="swatch" style="background: rgb(127,0,255)"></span>
+                        </label>
+                    </div>
 
-                <div class="custom-color">
-                    <label>Custom Color</label>
-                    <input type="color" id="customColor" value="#ff00ff">
-                    <span class="hex-value" id="customColorHex">#ff00ff</span>
-                </div>
+                    <div class="custom-color">
+                        <label>Custom</label>
+                        <input type="color" id="customColor" value="#ff00ff">
+                        <span class="hex-value" id="customColorHex">#ff00ff</span>
+                    </div>
+                </section>
             </div>
         </div>
     </div>
