@@ -103,13 +103,28 @@
             font-size: 8px;
         }
 
+        .action-buttons {
+            display: flex;
+            align-items: flex-end;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
         /* Clear button */
         .clear-btn {
-            margin-bottom: 16px;
             font-size: 8px;
         }
 
         .clear-btn.hidden {
+            display: none;
+        }
+
+        .compare-btn {
+            font-size: 8px;
+            user-select: none;
+        }
+
+        .compare-btn.hidden {
             display: none;
         }
 
@@ -394,7 +409,10 @@
                 </div>
                 <input type="file" id="fileInput" accept="image/*,video/*">
 
-                <button class="nes-btn is-error clear-btn hidden" id="clearBtn">Reset Input Source</button>
+                <div class="action-buttons">
+                    <button class="nes-btn is-error clear-btn hidden" id="clearBtn">Reset Input Source</button>
+                    <button class="nes-btn compare-btn hidden" id="compareBtn">Hold to compare</button>
+                </div>
                 <div class="image-output">
                     <img id="ditheredImage" src="" alt="Dithered image" hidden>
                 </div>

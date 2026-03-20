@@ -13,10 +13,15 @@ const colorPicker = document.getElementById('colorPicker');
 const customColor = document.getElementById('customColor');
 const customColorHex = document.getElementById('customColorHex');
 const clearBtn = document.getElementById('clearBtn');
+const compareBtn = document.getElementById('compareBtn');
 
 // Current loaded image data URL
 let currentImageSrc = null;
 let isDefaultImage = false;
+
+// Before/after comparison state
+let originalDisplaySrc = null;
+let currentDitheredSrc = null;
 
 // Video state (shared between webcam and uploaded video)
 let activeVideo = null;
@@ -36,7 +41,10 @@ function showImageState() {
 function showDropState() {
     dropZone.classList.remove('hidden');
     clearBtn.classList.add('hidden');
+    compareBtn.classList.add('hidden');
     currentImageSrc = null;
+    originalDisplaySrc = null;
+    currentDitheredSrc = null;
     ditheredImage.src = '';
     ditheredImage.hidden = true;
     stopVideo();
@@ -89,6 +97,7 @@ webcamBtn.addEventListener('click', async () => {
 
             activeVideo.onloadedmetadata = () => {
                 videoRunning = true;
+                compareBtn.classList.add('hidden');
                 webcamBtn.querySelector('.btn-label').textContent = 'Stop Webcam';
                 showImageState();
                 processVideoFrame();
@@ -113,6 +122,7 @@ function loadVideo(file) {
 
     activeVideo.onloadedmetadata = () => {
         videoRunning = true;
+        compareBtn.classList.add('hidden');
         showImageState();
         processVideoFrame();
     };
@@ -239,6 +249,9 @@ function applyDither() {
         const ctx = canvas.getContext('2d');
         ctx.drawImage(tempImg, 0, 0, iw, ih);
 
+        // Capture original (constrained) before dithering
+        originalDisplaySrc = canvas.toDataURL();
+
         // Get image data
         const imageData = ctx.getImageData(0, 0, iw, ih);
 
@@ -249,8 +262,10 @@ function applyDither() {
         ctx.putImageData(imageData, 0, 0);
 
         // Update dithered image display
-        ditheredImage.src = canvas.toDataURL();
+        currentDitheredSrc = canvas.toDataURL();
+        ditheredImage.src = currentDitheredSrc;
         ditheredImage.hidden = false;
+        compareBtn.classList.remove('hidden');
         showImageState();
     };
 }
@@ -370,3 +385,17 @@ brightnessSlider.addEventListener('input', () => {
 colorPicker.addEventListener('change', () => {
     if (currentImageSrc) applyDither();
 });
+
+// Before/after comparison button
+function showOriginal() {
+    if (originalDisplaySrc) ditheredImage.src = originalDisplaySrc;
+}
+function showDithered() {
+    if (currentDitheredSrc) ditheredImage.src = currentDitheredSrc;
+}
+compareBtn.addEventListener('mousedown', showOriginal);
+compareBtn.addEventListener('touchstart', (e) => { e.preventDefault(); showOriginal(); });
+compareBtn.addEventListener('mouseup', showDithered);
+compareBtn.addEventListener('mouseleave', showDithered);
+compareBtn.addEventListener('touchend', showDithered);
+compareBtn.addEventListener('touchcancel', showDithered);
