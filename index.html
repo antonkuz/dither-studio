@@ -129,6 +129,14 @@
             display: none;
         }
 
+        .download-btn {
+            font-size: 8px;
+        }
+
+        .download-btn.hidden {
+            display: none;
+        }
+
         /* Image output */
         .image-output {
             background: #111;
@@ -411,8 +419,9 @@
                 <input type="file" id="fileInput" accept="image/*,video/*">
 
                 <div class="action-buttons">
-                    <button class="nes-btn is-error clear-btn hidden" id="clearBtn">Reset Input Source</button>
-                    <button class="nes-btn compare-btn hidden" id="compareBtn">Hold to compare</button>
+                    <button class="nes-btn is-error clear-btn hidden" id="clearBtn">Reset</button>
+                    <button class="nes-btn compare-btn hidden" id="compareBtn">Compare</button>
+                    <button class="nes-btn is-success download-btn hidden" id="downloadBtn">Download</button>
                 </div>
                 <div class="image-output">
                     <img id="ditheredImage" src="" alt="Dithered image" hidden>

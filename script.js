@@ -14,6 +14,7 @@ const customColor = document.getElementById('customColor');
 const customColorHex = document.getElementById('customColorHex');
 const clearBtn = document.getElementById('clearBtn');
 const compareBtn = document.getElementById('compareBtn');
+const downloadBtn = document.getElementById('downloadBtn');
 
 // Current loaded image data URL
 let currentImageSrc = null;
@@ -35,13 +36,14 @@ const FRAME_INTERVAL = 1000 / TARGET_FPS;
 function showImageState() {
     dropZone.classList.add('hidden');
     clearBtn.classList.remove('hidden');
-    clearBtn.textContent = isDefaultImage ? 'Use Your Own Image' : 'Reset Image';
+    clearBtn.textContent = isDefaultImage ? 'Use Your Own' : 'Reset';
 }
 
 function showDropState() {
     dropZone.classList.remove('hidden');
     clearBtn.classList.add('hidden');
     compareBtn.classList.add('hidden');
+    downloadBtn.classList.add('hidden');
     currentImageSrc = null;
     originalDisplaySrc = null;
     currentDitheredSrc = null;
@@ -98,6 +100,7 @@ webcamBtn.addEventListener('click', async () => {
             activeVideo.onloadedmetadata = () => {
                 videoRunning = true;
                 compareBtn.classList.add('hidden');
+                downloadBtn.classList.add('hidden');
                 webcamBtn.querySelector('.btn-label').textContent = 'Stop Webcam';
                 showImageState();
                 processVideoFrame();
@@ -123,6 +126,7 @@ function loadVideo(file) {
     activeVideo.onloadedmetadata = () => {
         videoRunning = true;
         compareBtn.classList.add('hidden');
+        downloadBtn.classList.add('hidden');
         showImageState();
         processVideoFrame();
     };
@@ -266,6 +270,7 @@ function applyDither() {
         ditheredImage.src = currentDitheredSrc;
         ditheredImage.hidden = false;
         compareBtn.classList.remove('hidden');
+        downloadBtn.classList.remove('hidden');
         showImageState();
     };
 }
@@ -399,3 +404,13 @@ compareBtn.addEventListener('mouseup', showDithered);
 compareBtn.addEventListener('mouseleave', showDithered);
 compareBtn.addEventListener('touchend', showDithered);
 compareBtn.addEventListener('touchcancel', showDithered);
+
+downloadBtn.addEventListener('click', () => {
+    if (!currentDitheredSrc) return;
+    const link = document.createElement('a');
+    const now = new Date();
+    const ts = now.toISOString().slice(0, 19).replace(/[:T]/g, '-');
+    link.download = `dither-studio-${ts}.png`;
+    link.href = currentDitheredSrc;
+    link.click();
+});
