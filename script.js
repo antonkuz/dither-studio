@@ -37,6 +37,7 @@ function showImageState() {
     dropZone.classList.add('hidden');
     clearBtn.classList.remove('hidden');
     clearBtn.textContent = isDefaultImage ? 'Use Your Own' : 'Reset';
+    document.querySelector('.image-output').classList.add('active');
 }
 
 function showDropState() {
@@ -44,6 +45,7 @@ function showDropState() {
     clearBtn.classList.add('hidden');
     compareBtn.classList.add('hidden');
     downloadBtn.classList.add('hidden');
+    document.querySelector('.image-output').classList.remove('active');
     currentImageSrc = null;
     originalDisplaySrc = null;
     currentDitheredSrc = null;
