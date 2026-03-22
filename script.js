@@ -358,10 +358,6 @@ function loadImageFromUrl(url) {
     img.src = url;
 }
 
-// Load placeholder image on startup
-isDefaultImage = true;
-loadImageFromUrl('fishka.jpeg');
-
 // Recommended brightness per step to compensate for darkness
 const stepBrightnessMap = { 1: 0, 2: 6, 3: 1, 4: 8, 5: 1, 6: 9, 7: 3, 8: 10 };
 
