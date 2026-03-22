@@ -37,6 +37,7 @@ function showImageState() {
     dropZone.classList.add('hidden');
     clearBtn.classList.remove('hidden');
     clearBtn.textContent = isDefaultImage ? 'Use Your Own' : 'Reset';
+    document.querySelector('.image-output').classList.add('active');
 }
 
 function showDropState() {
@@ -44,6 +45,7 @@ function showDropState() {
     clearBtn.classList.add('hidden');
     compareBtn.classList.add('hidden');
     downloadBtn.classList.add('hidden');
+    document.querySelector('.image-output').classList.remove('active');
     currentImageSrc = null;
     originalDisplaySrc = null;
     currentDitheredSrc = null;
@@ -357,10 +359,6 @@ function loadImageFromUrl(url) {
     };
     img.src = url;
 }
-
-// Load placeholder image on startup
-isDefaultImage = true;
-loadImageFromUrl('fishka.jpeg');
 
 // Recommended brightness per step to compensate for darkness
 const stepBrightnessMap = { 1: 0, 2: 6, 3: 1, 4: 8, 5: 1, 6: 9, 7: 3, 8: 10 };
